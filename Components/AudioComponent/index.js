@@ -2,57 +2,68 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Animated, Pressable } from 'react-native';
 //3rd party packages
 import { Audio } from 'expo-av';
+// import Sound from 'react-native-sound';
 import LinearGradient from 'react-native-linear-gradient';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
-
-const AudioPlay = (  ) => {
-    const { data } = '../../voiceData/Dhoora-Vaaney-MassTamilan.dev.mp3'
+import { Fontisto } from "@expo/vector-icons";
+const AudioPlay = ( ) => {
+    // const audio = props
+    // console.log("audio",audio);
+    const  data  = '../../voiceData/Dhoora-Vaaney-MassTamilan.dev.mp3'
     const [constTime, setConstTime] = useState(data?.time)
-    const [isPlaying, setPlaying] = useState(false);
+    const [isPlaying, issetPlaying] = useState(false);
     const [sound, setSound] = useState(null)
+    const [position, setPosition] = useState(null);
 
 
+    async function playSound() {
+        try {
+          const soundObject = new Audio.Sound();
+          await soundObject.loadAsync(require('../../voiceData/Dhoora-Vaaney-MassTamilan.dev.mp3'));
+          await soundObject.playAsync();
+    
+          setSound(soundObject);
+          getPosition();
 
-    const playAudio = async () => {
-        // const { sound } = await Audio.Sound.createAsync(
-        //     { uri: data.uri },
-        //     { shouldPlay: false }.uri
-        // );
-        setSound(data);
-        setPlaying(true)
-        console.log('Playing Sound');
-        await sound.playAsync();
-    }
+          issetPlaying(true)
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      async function stopSound() {
+        if (sound !== null) {
+          await sound.stopAsync();
+          getPosition();
 
+        }
+        issetPlaying(false)
+      }
+      async function getPosition() {
+        if (sound !== null) {
+          const status = await sound.getStatusAsync();
+          setPosition(status.durationMillis);
+        }
+      }
     return (
         <View style={styles.container}>
-            <CountdownCircleTimer
-            key={isPlaying}
-                isPlaying={isPlaying}
-                duration={constTime}
-                colors={[
-                    ['#F91561', 0.5],
-                    ['#F9195F', 0.3],
-                    ['#FADD0B', 0.2],
-                ]}
-                onComplete={()=>setPlaying(false)}
-            >
-                {({ remainingTime, elapsedTime }) => (
-                    <Pressable
-                        onPress={playAudio}
-                    >
+            <View style={styles.playContainer}>
 
-                        {/* <LinearGradient
-                            colors={['#F9195F', '#FADD0B']}
-                            style={styles.linearGradient}>
-                            <Animated.Text style={styles.textStyle}>
-                                {remainingTime}
-                            </Animated.Text>
-                            <Text style={styles.secsStyle}>secs left</Text>
-                        </LinearGradient> */}
-                    </Pressable>
-                )}
-            </CountdownCircleTimer>
+        {
+            isPlaying ?  <Fontisto name="pause" color="#000" size={20} style={styles.playButton} onPress={stopSound} ></Fontisto> 
+               :<Fontisto name="play" color="#000" size={20} style={styles.playButton} onPress={playSound} ></Fontisto>
+              
+        }
+    {/*         
+            <Fontisto name="pause" color="#000" size={20} style={styles.playButton} onPress={stopSound} ></Fontisto> 
+                <Fontisto name="play" color="#000" size={20} style={styles.playButton} onPress={playSound} ></Fontisto>
+                */}
+
+            <View style={styles.audio}><View style={styles.dot}></View></View>
+            {position !== null && <Text style={styles.time}>{` ${Math.floor( position/1000)}`}</Text>}
+
+            
+            </View>
+           
         </View>
     );
 };
@@ -60,17 +71,19 @@ const AudioPlay = (  ) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        display:'flex',
+       flexDirection:'row',
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor:'#9fe38a',
+        height:40,  
+        // margin:15,
+        marginBottom:15,
+        marginTop:15,
+        marginLeft:160,
+        borderRadius:10
     },
-    linearGradient: {
-        width: 170,
-        height: 170,
-        // borderRadius: 170 / 2,
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
+   
     textStyle: {
         fontSize: 40,
         color: 'white'
@@ -79,6 +92,51 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: 'white',
         opacity: 0.7
+    },
+    playContainer:{
+        // margin:30,
+        display:'flex',
+        height:20,
+        width:150,
+        flexDirection:'row',
+      marginRight:15
+        // width:20
+        // padding:50
+
+
+
+    },
+    audio:{
+        backgroundColor:'white',
+        borderColor:'black',
+        borderWidth:1,
+        borderRadius:50,
+        height:10,
+        width:100,
+        marginTop:5,
+        marginRight:10
     }
+    ,
+    playButton:
+    {
+// marginLeft:20
+marginRight:10  
+    },
+    time:{
+        marginRight:10
+    },
+    dot:{
+        width:14,
+        height:20,
+        borderRadius:100,
+        backgroundColor:'red',
+    marginTop:0,
+    // marginLeft:20
+    position:'relative',
+    marginBottom:10
+
+
+    }
+
 });
 export default AudioPlay;

@@ -30,6 +30,18 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  fill: {
+    flex: 1,
+    margin: 16
+  },
+  button: {
+    margin: 16
   }
 })
 

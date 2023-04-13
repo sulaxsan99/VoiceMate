@@ -48,7 +48,7 @@ export default function Signup({ navigation }) {
         name: name,
         time: serverTimestamp()
     }).then(()=>{
-      alert("data added successfully")
+      alert("Account created successfully")
     }).catch((error)=>{
       alert(error);
     });

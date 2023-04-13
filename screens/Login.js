@@ -13,7 +13,7 @@ export default function Login({ navigation }) {
     if (email !== "" && password !== "") {
       signInWithEmailAndPassword(auth, email, password)
         .then(() => console.log("Login success"))
-        .catch((err) => Alert.alert("Login error", err.message));
+        .catch((err) => Alert.alert("Login error",err.message));
     } else {
       alert("All Are Empty")
     }

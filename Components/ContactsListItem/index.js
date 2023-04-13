@@ -74,6 +74,7 @@ const ContactListItem = (props) => {
   const onClick = async () => {
     console.log(cuurrentuser.uid, user.id)
     const chatroomid = cuurrentuser.uid + user.id;
+    const chatroomid1= user.id+ cuurrentuser.uid;
     try {
       set(ref(db, 'chatroom/' + chatroomid), {
         sender: cuurrentuser.uid,
@@ -81,11 +82,28 @@ const ContactListItem = (props) => {
       }).then(() => {
         alert("chat room added successfully")
       })
-
+      // onClick2();
     } catch (error) {
       console.log(error);
     }
   }
+  // const onClick2 = async () => {
+  //   console.log(cuurrentuser.uid, user.id)
+    
+  //   const chatroomid1= user.id+ cuurrentuser.uid;
+  //   try {
+  //     set(ref(db, 'chatroom/' + chatroomid1), {
+  //       sender: user.id,
+  //       reciver: cuurrentuser.uid 
+  //     }).then(() => {
+  //       alert("chat room added successfully")
+  //     })
+
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   return (
     <TouchableWithoutFeedback onPress={onClick} >
       <View style={styles.container}>

@@ -11,7 +11,7 @@ import { getFirestore,collection,
   setDoc,
   where,
   uploadAudio,
-  getDoc,collectionGroup,serverTimestamp  } from 'firebase/firestore';
+  getDoc,collectionGroup,serverTimestamp,ref  } from 'firebase/firestore';
 
   import {getDatabase} from 'firebase/database'
 // Firebase config
@@ -30,5 +30,5 @@ const auth = getAuth(app);
  const db=getDatabase(app);
 export {
   db,
-  auth,serverTimestamp
+  auth,serverTimestamp,ref
 };

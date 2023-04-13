@@ -40,11 +40,10 @@ const ChatMessage = (props) => {
   const isMyMessage = () => {
     if (user.uid === message.sender) {
       return true
-     }
-      return false;
-    
-
+    }
+    return false;
   }
+
   useEffect(() => {
     getsender();
   }, [])
@@ -57,15 +56,13 @@ const ChatMessage = (props) => {
           marginRight: isMyMessage() ? 0 : 50,
         }
       ]}>
-        <Text style={styles.name} >{message.sender}</Text>
+        <Text style={styles.name} >{message.name}</Text>
 
-        <Text style={styles.message}>{message.message ? message.message : <Audio />}</Text>
+        <Text style={styles.message}>{message.message}</Text>
         <Text style={styles.time} >{moment(date.toString()).fromNow()}</Text>
-
-
       </View>
-      {/* <Audio /> */}
 
+      <Audio />
     </View>
   )
 }

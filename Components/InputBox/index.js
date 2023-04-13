@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Button } from "react-native";
 import styles from './style';
 import {
     MaterialCommunityIcons,
@@ -10,28 +10,25 @@ import {
 } from '@expo/vector-icons';
 import { Audio } from 'expo-av'
 import {
-    auth,
+    auth
 } from '../../config/firebase';
-import { getStorage, uploadBytes, ref } from "firebase/storage";
-import { getDatabase, set, serverTimestamp, push } from "firebase/database";
-
+import { getStorage, uploadBytes } from "firebase/storage";
+import {
+    getDatabase, set, serverTimestamp, push, onValue, ref
+} from "firebase/database";
+import { uploadAudio } from './data'
 // import * as firebase from 'firebase';
-import AudioRecorderPlayer, {
-    AVEncoderAudioQualityIOSType,
-    AVEncodingOption,
-    AudioEncoderAndroidType,
-    AudioSourceAndroidType,
-    AudioSet,
-    AVModeIOSOption
-} from 'react-native-audio-recorder-player';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import Toast from 'react-native-toast-message';
+import * as FileSystem from 'expo-file-system';
 const InputBox = (props) => {
 
-
+    const currentUser = auth.currentUser;
     const { chatRoomID } = props;
     const [recording, setRecording] = useState('')
-    // const [recordings, setRecordings] = useState([])
+    const [recordings, setRecordings] = useState([]);
     const [message, setMessage] = useState('');
-    const [recordSecs, setrecordSecs] = useState(0);
+    const [name, setname] = useState('');
     const [recordTime, setrecordTime] = useState('00:00:00')
 
 
@@ -39,12 +36,27 @@ const InputBox = (props) => {
     const storage = getStorage();
 
     const audioRecorderPlayer = new AudioRecorderPlayer();
-    // audioRecorderPlayer.setSubscriptionDuration(0.09); // optional. Default is 0.1
-    // console.log(route.params)
+// console.log(audioRecorderPlayer)
+    const getuser = async () => {
+        try {
+            const db = getDatabase();
+
+            const starCountRef = ref(db, `users/${currentUser.uid}`);
+            onValue(starCountRef, (snapshot) => {
+                const data = snapshot.val();
+                console.log("recivername", data.name)
+                setname(data.name)
+            });
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const AdduserChat = async () => {
         try {
             const uid = auth.currentUser.uid;
-            console.log(uid)
+            // console.log(uid)
             const db = getDatabase();
             const postListRef = ref(db, `chats/${chatRoomID}`);
             const newPostRef = push(postListRef);
@@ -52,86 +64,90 @@ const InputBox = (props) => {
                 message: message,
                 CreatedAt: serverTimestamp(),
                 sender: uid,
+                name: name,
             });
+            setMessage('');
         } catch (error) {
             console.log(error)
         }
     }
 
+    useEffect(() => {
+        getuser();
 
+    }, [])
 
+    async function startRecording() {
+        try {
+            const permission = await Audio.requestPermissionsAsync();
 
-    // async function StartRecording() {
-    //     try {
-    //         console.log('Requesting submission');
-    //         await Audio.requestPermissionsAsync();
-    //         await Audio.setAudioModeAsync({
-    //             allowsRecordingIOS: true,
-    //             playsInSilentModeIOS: true,
+            if (permission.status === "granted") {
+                await Audio.setAudioModeAsync({
+                    allowsRecordingIOS: true,
+                    playsInSilentModeIOS: true
+                });
 
-    //         });
-    //         console.log("start Recordings...")
-    //         const recording = new Audio.Recording();
-    //         await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY)
-    //         await recording.startAsync()
-    //         setRecording(recording);
-    //         console.log('recording started')
-    //     } catch (err) {
-    //         console.log('recording fail', err)
-    //     }
+                const { recording } = await Audio.Recording.createAsync(
+                    Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+                );
+
+                setRecording(recording);
+            } else {
+                setMessage("Please grant permission to app to access microphone");
+            }
+        } catch (err) {
+            console.error('Failed to start recording', err);
+        }
+    }
+
+     
+    async function stopRecording() {
+        setRecording(undefined);
+        await recording.stopAndUnloadAsync();
+
+        let updatedRecordings = [...recordings];
+        const { sound, status } = await recording.createNewLoadedSoundAsync();
+        updatedRecordings.push({
+            sound: sound,
+            duration: getDurationFormatted(status.durationMillis),
+            file: recording.getURI()
+        });
+
+        setRecordings(updatedRecordings);
+        uploadAudio(recording)
+        console.log(recording)
+        // await convertToMp3(recording.getURI());
+    }
+    function getRecordingLines() {
+        return recordings.map((recordingLine, index) => {
+            return (
+                <View key={index} style={styles.row}>
+                    <Text style={styles.fill}>Recording {index + 1} - {recordingLine.duration}</Text>
+                    <Button style={styles.button} onPress={() => recordingLine.sound.replayAsync()} title="Play"></Button>
+                    {/* <Button style={styles.button} onPress={() => Sharing.shareAsync(recordingLine.file)} title="Share"></Button> */}
+                </View>
+            );
+        });
+    }
+    function getDurationFormatted(millis) {
+        const minutes = millis / 1000 / 60;
+        const minutesDisplay = Math.floor(minutes);
+        const seconds = Math.round((minutes - minutesDisplay) * 60);
+        const secondsDisplay = seconds < 10 ? `0${seconds}` : seconds;
+        return `${minutesDisplay}:${secondsDisplay}`;
+    }
+    // const ShowToast = () => {
+    //     Toast.show({
+    //         type: "success",
+    //         text1: 'Toast message',
+    //         text2: 'This is secondary ',
+    //         autoHide:true,
+    //         visibilityTime:2500
+    //     })
     // }
 
-    // async function StopRecording() {
-    //     console.log('stoppingrecording...');
-    //     setRecording(undefined);
-    //     await recording.stopAndUnloadAsync();
 
-    //     const uri =await fetch( recording.getURI());
-    //     const file = await uri.blob();
-    //     const storageRef = ref(storage, '123499');
-    //     const snapshot = await uploadBytes(storageRef, file)
-
-    //     console.log('Recording stooped at ', recording.getURI())
-    // }
-
-    const audioSet = {
-        AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
-        AudioSourceAndroid: AudioSourceAndroidType.MIC,
-        AVModeIOS: AVModeIOSOption.measurement,
-        AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
-        AVNumberOfChannelsKeyIOS: 2,
-        AVFormatIDKeyIOS: AVEncodingOption.aac,
-    };
-    const meteringEnabled = false;
-
-
-    onStartRecord = async () => {
-        try {
-           
-            console.log('audioSet', audioSet);
-            const filePath = 'audio.mp3';
-            const uri = await audioRecorderPlayer.startRecorder(filePath,audioSet,meteringEnabled);
-            audioRecorderPlayer.addRecordBackListener((e) => {
-                setrecordSecs(e.currentPosition)
-                const tim = audioRecorderPlayer.mmssss(Math.floor(e.currentPosition))
-                setrecordTime(tim);
-            });
-            console.log(`uri: ${uri}`);
-            setRecording(uri)
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    onStopRecord = async () => {
-        try {
-            const result = await audioRecorderPlayer.stopRecorder();
-            audioRecorderPlayer.removeRecordBackListener();
-            console.log(result);
-            console.log(recording);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    
     return (
         <KeyboardAvoidingView
             behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -139,6 +155,10 @@ const InputBox = (props) => {
             style={{ width: '100%' }}
         >
             <View style={styles.container}>
+                {/* {
+                    getRecordingLines()
+                } */}
+                
                 <View style={styles.mainContainer}>
                     <FontAwesome5 name="laugh-beam" size={24} color="grey" />
                     <TextInput
@@ -151,7 +171,7 @@ const InputBox = (props) => {
                     <Entypo name="attachment" size={24} color="grey" style={styles.icon} />
                     {!message && <Fontisto name="camera" size={24} color="grey" style={styles.icon} />}
                 </View>
-                <TouchableOpacity onLongPress={recording ? onStopRecord : onStartRecord }>
+                <TouchableOpacity onLongPress={recording ? stopRecording : startRecording} >
                     <View style={styles.buttonContainer}>
                         {!message
                             ? <MaterialCommunityIcons name="microphone" size={28} color="black" />

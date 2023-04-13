@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
-   marginTop:580,
+   marginTop:450,
   marginLeft:320
   }
 })

@@ -7,10 +7,12 @@ import {
   auth,
 } from '../config/firebase';
 import { getDatabase ,ref,set,serverTimestamp,onValue,query,startAt,orderByChild,equalTo} from "firebase/database";
+import { useNavigation } from '@react-navigation/native';
+
 
 export const ChatScreen = () => {
   const [chatrooms, setchatrooms] = useState('');
-
+  const navigation = useNavigation();
 
 
   const getAllRooms = async () => {
@@ -24,12 +26,21 @@ export const ChatScreen = () => {
       const starCountRef =query(ref(db, 'chatroom/'),orderByChild(`sender/`),equalTo(auth.currentUser.uid));
       onValue(starCountRef, (snapshot) => {
         const data = snapshot.val();
-        const chatroom =Object.keys(data).map(key =>({
-          id:key,
-       ...data[key]
-        }))
         // console.log(data)
-        setchatrooms(chatroom)
+        if(data!=null){
+       
+            const chatroom =Object.keys(data).map(key =>({
+                  id:key,
+               ...data[key]
+                }))
+                setchatrooms(chatroom)
+              }else{
+                // navigation.navigate("setting")
+              console.log("data is empty")
+              }
+       
+        // console.log(data)
+       
         // console.log(chatrooms)
       });    
     } catch (error) {
@@ -42,12 +53,15 @@ export const ChatScreen = () => {
   },[]);
   return (
     <View sty le={styles.container}>
-      <FlatList
-        style={{ width: '100%',backgroundColor:'red' }}
+    
+        <FlatList
+        style={{ width: '100%' }}
         data={chatrooms}
         renderItem={({ item }) => <ChatListItem chatRoom={item} />}
         keyExtractor={(item) => item.id}
-      />
+      /> 
+      
+      
 
       <NewMessageButton />
       <View>

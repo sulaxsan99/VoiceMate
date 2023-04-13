@@ -19,13 +19,26 @@ export const SettingScreen = () => {
     const [password, setPassword] = useState('');
     const updateUser = async () => {
         try {
-            const UpdateUser = doc(db, "users", user.uid);
-            await updateDoc(UpdateUser, {
-                status: status,
-                name: name,
-            }).then((res) => {
-                alert("data updated");
-            });
+            const db = getDatabase();
+            if(status=="" || password=="" ){
+                alert("Fields are empty")
+            }else{
+                set(ref(db, 'users/' + user.uid), {
+                    email:email,
+                    status: status,
+                    password: password,
+                    time:serverTimestamp(),
+                    name:name
+                })
+                .then(() => {
+                  alert("Your data updated successfully ")
+                })
+                .catch((error) => {
+                  alert(error)
+                });
+            }
+            
+
         } catch (error) {
             console.log(error)
         }
@@ -36,9 +49,9 @@ export const SettingScreen = () => {
         onValue(starCountRef, (snapshot) => {
             const data = snapshot.val();
             setEmail(data.email);
-            setStatus(data.status);
+            // setStatus(data.status);
             setName(data.name);
-            setPassword(data.password)
+            // setPassword(data.password)
             //   const newuser =Object.keys(data).map(key =>({
             //     id:key,
             //     ...data[key]
@@ -137,7 +150,7 @@ export const SettingScreen = () => {
                         secureTextEntry={true}
                         textContentType="password"
                         value={password}
-
+editable={true}
                         onChangeText={(text) => setPassword(text)}
                     />
                 </View>
