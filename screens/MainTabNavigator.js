@@ -10,7 +10,7 @@ export const MainTabNavigator = () => {
   return (
     <MainTab.Navigator
     initialRouteName="Chats"
-    tabBarOptions={{
+    screenOptions={{
       activeTintColor: '#000000',
       style: {
         backgroundColor: '#437eab',

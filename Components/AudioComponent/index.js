@@ -6,6 +6,8 @@ import { Audio } from 'expo-av';
 import LinearGradient from 'react-native-linear-gradient';
 import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { Fontisto } from "@expo/vector-icons";
+// import Slider from '@react-native-community/slider';
+
 const AudioPlay = ( ) => {
     // const audio = props
     // console.log("audio",audio);
@@ -53,11 +55,6 @@ const AudioPlay = ( ) => {
                :<Fontisto name="play" color="#000" size={20} style={styles.playButton} onPress={playSound} ></Fontisto>
               
         }
-    {/*         
-            <Fontisto name="pause" color="#000" size={20} style={styles.playButton} onPress={stopSound} ></Fontisto> 
-                <Fontisto name="play" color="#000" size={20} style={styles.playButton} onPress={playSound} ></Fontisto>
-                */}
-
             <View style={styles.audio}><View style={styles.dot}></View></View>
             {position !== null && <Text style={styles.time}>{` ${Math.floor( position/1000)}`}</Text>}
 
@@ -126,17 +123,20 @@ marginRight:10
         marginRight:10
     },
     dot:{
-        width:14,
+        width:20,
         height:20,
         borderRadius:100,
         backgroundColor:'red',
     marginTop:0,
     // marginLeft:20
     position:'relative',
-    marginBottom:10
+    // marginBottom:100,
+    padding:10,
+    marginRight:10,
+    marginBottom:20,
+    alignItems:'center'
+    },
 
-
-    }
 
 });
 export default AudioPlay;
