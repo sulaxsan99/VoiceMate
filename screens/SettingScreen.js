@@ -158,7 +158,7 @@ editable={true}
                 <View style={styles.update}>
                     <Button
                         title="update"
-                        color="#841520"
+                        color="#4269f5"
                         onPress={updateUser}
                         style={styles.update}
                     />
@@ -222,7 +222,8 @@ const styles = StyleSheet.create({
         color: 'black',
         fontStyle: 'normal',
         fontSize: 20,
-        borderBottomWidth: 1
+        borderBottomWidth: 1,
+        fontWeight:'500'
     },
     update: {
         marginTop: 12,
@@ -231,5 +232,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontStyle: 'normal',
         fontWeight: '600',
+    
     }
 });

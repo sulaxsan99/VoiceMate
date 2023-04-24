@@ -6,7 +6,7 @@ import {
 } from '../config/firebase';
 
 import { getDatabase ,ref,set,serverTimestamp} from "firebase/database";
-
+// import { useNavigation } from '@react-navigation/native';
 // import firebase from 'react-native-firebase'
 const backImage = require("../assets/123.png");
 
@@ -20,7 +20,7 @@ export default function Signup({ navigation }) {
   //   var regexp = /^\+[0-9]?()[0-9](\s|\S)(\d[0-9]{8,16})$/
   //   return regexp.test(this.state.phone)
   //   }
-
+  // const navigation = useNavigation();
   //  const userRef= db.collection('users');
   const onHandleSignup = () => {
     if (email !== '' && password !== '' && confirmPassword !== '') {
@@ -28,9 +28,7 @@ export default function Signup({ navigation }) {
         createUserWithEmailAndPassword(auth, email, password)
           .then(() => {
             CreateUser();
-            // navigation.navigate('Login',{screen:'Login'});
           })
-          // .finally(() => )
           .catch((err) => alert(err.message));
       } else {
         alert("Enter Correct Confirm Password");
@@ -52,8 +50,6 @@ export default function Signup({ navigation }) {
     }).catch((error)=>{
       alert(error);
     });
-
-
   }
 
 

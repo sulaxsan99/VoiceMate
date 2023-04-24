@@ -27,6 +27,8 @@ function ChatStack() {
       headerShown: false
     }}>
       <Stack.Screen name='Home' component={Home}  />
+      {/* <Stack.Screen name='Login' component={Login} />
+      <Stack.Screen name='Signup' component={Signup} /> */}
       {/* <Stack.Screen name='Chat' component={Chat} /> */}
     </Stack.Navigator>
   );

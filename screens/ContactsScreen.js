@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, TouchableOpacity, Text, Image, StyleSheet, FlatList } from "react-native";
-import data from '../data/Users'
+
 import ContactListItem from '../Components/ContactsListItem';
 import NewMessageButton from '../Components/NewMessageButton';
 import {

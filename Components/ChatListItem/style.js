@@ -6,14 +6,16 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: 'space-between',
     padding: 10,
-
-   
+    borderColor:'black',
+    borderWidth:0.5,
+  
   },
   lefContainer: {
     flexDirection: 'row',
   },
   midContainer: {
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
+   
   },
   avatar: {
     width: 60,

@@ -18,6 +18,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 50,
     marginRight: 15,
+    backgroundColor:"red"
   },
   username: {
     fontWeight: 'bold',

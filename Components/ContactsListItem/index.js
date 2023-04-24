@@ -15,6 +15,7 @@ const ContactListItem = (props) => {
   const { user } = props;
   const cuurrentuser = auth.currentUser;
   const navigation = useNavigation();
+const image = 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&w=1000&q=80';
 
   // const onClick = async () => {
   //   try {
@@ -108,7 +109,7 @@ const ContactListItem = (props) => {
     <TouchableWithoutFeedback onPress={onClick} >
       <View style={styles.container}>
         <View style={styles.lefContainer}>
-          <Image source={{ uri: user.imageUri }} style={styles.avatar} />
+          <Image source={{ uri: image }} style={styles.avatar} />
 
           <View style={styles.midContainer}>
             <Text style={styles.username}>{user.name}</Text>

@@ -5,10 +5,12 @@ import { getDatabase, ref, set, serverTimestamp, onValue } from "firebase/databa
 import styles from './style';
 import moment from 'moment';
 import { auth } from '../../config/firebase';
+import { Fontisto } from "@expo/vector-icons";
 
 import Audio from '../AudioComponent/index'
 import { useState } from 'react';
 import { useEffect } from 'react';
+
 const ChatMessage = (props) => {
 
 
@@ -48,7 +50,22 @@ const ChatMessage = (props) => {
     getsender();
   }, [])
   return (
-    <View style={styles.container}>
+   
+<View style={styles.container}  >
+      {/* {
+        message.message ? <View style={[
+          styles.messageBox, {
+            backgroundColor: isMyMessage() ? '#DCF8C5' : 'white',
+            marginLeft: isMyMessage() ? 50 : 0,
+            marginRight: isMyMessage() ? 0 : 50,
+          }
+        ]}>
+          <Text style={styles.name} >{message.name}</Text>
+  
+          <Text style={styles.message}>{message.message}</Text>
+          <Text style={styles.time} >{moment(date.toString()).fromNow()}</Text>
+        </View>:  <Audio uri={message.AudioUrl} CreatedAt={message.CreatedAt} sender={message.sender}/>
+      } */}
       <View style={[
         styles.messageBox, {
           backgroundColor: isMyMessage() ? '#DCF8C5' : 'white',
@@ -56,14 +73,18 @@ const ChatMessage = (props) => {
           marginRight: isMyMessage() ? 0 : 50,
         }
       ]}>
-        <Text style={styles.name} >{message.name}</Text>
+        <Text style={styles.name} >{message.name}
+         {/* <Fontisto name='trash' color="#000" size={20}  style={{marginLeft:200,backgroundColor:'blue',padding:40}} /> */}
+          </Text>
 
-        <Text style={styles.message}>{message.message}</Text>
+        <Text style={styles.message}>{message.message ? message.message :  <Audio  uri={message.AudioUrl}  sender={message.sender} duration={message.duration} emotion={message.emotion} />}</Text>
         <Text style={styles.time} >{moment(date.toString()).fromNow()}</Text>
       </View>
 
-      <Audio />
+     
     </View>
+
+    
   )
 }
 

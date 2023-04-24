@@ -12,7 +12,8 @@ export default function Login({ navigation }) {
   const onHandleLogin = () => {
     if (email !== "" && password !== "") {
       signInWithEmailAndPassword(auth, email, password)
-        .then(() => console.log("Login success"))
+        .then(() => {Alert.alert("Login success")
+      })
         .catch((err) => Alert.alert("Login error",err.message));
     } else {
       alert("All Are Empty")

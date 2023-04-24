@@ -7,7 +7,10 @@ const uploadAudio = async (recording) => {
         const random = Math.random()*1000;
         const uriParts = recording.getURI().split(".");
         const fileType = uriParts[uriParts.length - 1];
-        const storageRef = ref(storage, `${filename}/${uriParts.length-2}.${fileType}`);
+        const audiofile =(uriParts[uriParts.length - 2]).split("/")
+        const audiofilename= audiofile[audiofile.length-1]
+        console.log(audiofilename)
+        const storageRef = ref(storage, `${filename}/${audiofilename}.${fileType}`);
         const response = await fetch(recording.getURI());
         const blob = await response.blob();
         // console.log(response)
@@ -21,7 +24,7 @@ const uploadAudio = async (recording) => {
 
 const getAllaudio =()=>{
     const storage = getStorage();
-    const listRef = ref(storage, 'Audio');
+    const listRef = ref(storage, 'Audio/2.3gb');
     listAll(listRef)
     .then((res) => {
       res.prefixes.forEach((folderRef) => {
@@ -29,9 +32,9 @@ const getAllaudio =()=>{
         // You may call listAll() recursively on them.
       });
       res.items.forEach((itemRef) => {
-    //   itemRef.getDownloadURL().then((url)=>{
-    //     console.log("download url "+ url)
-    //   })
+      itemRef.getDownloadURL().then((url)=>{
+        console.log("download url "+ url)
+      })
     // console.log(itemRef)
     // return itemRef;
       });
